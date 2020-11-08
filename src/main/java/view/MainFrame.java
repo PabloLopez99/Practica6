@@ -299,7 +299,11 @@ public class MainFrame extends javax.swing.JFrame {
     private void saveFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveFileMenuItemActionPerformed
        int res = fc.showSaveDialog(null);
         if(res==JFileChooser.APPROVE_OPTION){
-            ImageHandler.saveImage(fc.getSelectedFile().getAbsolutePath());
+           try {
+               ImageHandler.saveImage(fc.getSelectedFile().getAbsolutePath());
+           } catch (IOException ex) {
+               Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+           }
             lienzo1.repaint();
         }else if (res==JFileChooser.CANCEL_OPTION){
             

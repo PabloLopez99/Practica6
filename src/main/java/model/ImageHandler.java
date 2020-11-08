@@ -6,7 +6,9 @@
 package model;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferInt;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
@@ -36,23 +38,73 @@ public class ImageHandler {
         }
     }
 
-    public static void saveImage(String path) {
+    public static void saveImage(String path) throws IOException {
         System.out.println(path);
         System.out.println(Lienzo.getImage().getWidth());
-       
+        
+        BufferedImage bi = Lienzo.getImage();
+        File outputfile = new File(path);
+        ImageIO.write(bi, "png", outputfile);
+
 
         //Mat m= new Mat(Lienzo.getImage().getWidth(),Lienzo.getImage().getHeight(),CvType.CV_8UC3);
-        //byte[] pixels = ((DataBufferByte) Lienzo.getImage().getRaster().getDataBuffer()).getData();
+     //   byte[] pixels = ((DataBufferByte) Lienzo.getImage().getRaster().getDataBuffer()).getData();
         
        // m.put(0, 0, pixels, 7, pixels.length);
        
         
         // Imgcodecs.imwrite(Lienzo.getImage().toString(),fichero.getAbsolutePath());
 
-        Imgcodecs.imwrite(path,img2Mat(Lienzo.getImage()));
-     
-
+       // Imgcodecs.imwrite(path,bufferedImageToMat(Lienzo.getImage()));
+       // BufferedImage img = new BufferedImage(320, 240, BufferedImage.TYPE_3BYTE_BGR);
+        //img.setRGB(0, 0, 320, 240, pixels, 0, 320);
+        
     }
+    public static Mat bufferedImageToMat(BufferedImage bi) {
+         Mat mat = new Mat(bi.getHeight(), bi.getWidth(), CvType.CV_8UC3);
+        byte[] data = ((DataBufferByte) bi.getRaster().getDataBuffer()).getData();
+        mat.put(0, 0, data);
+        return mat;
+}
+    public static Mat matify(BufferedImage sourceImg) {
+
+    long millis = System.currentTimeMillis();
+
+    DataBuffer dataBuffer = sourceImg.getRaster().getDataBuffer();
+    byte[] imgPixels = null;
+    Mat imgMat = null;
+
+    int width = sourceImg.getWidth();
+    int height = sourceImg.getHeight();
+
+    if(dataBuffer instanceof DataBufferByte) {      
+            imgPixels = ((DataBufferByte)dataBuffer).getData();
+    }
+
+    if(dataBuffer instanceof DataBufferInt) {
+
+        int byteSize = width * height;      
+        imgPixels = new byte[byteSize*3];
+
+        int[] imgIntegerPixels = ((DataBufferInt)dataBuffer).getData();
+
+        for(int p = 0; p < byteSize; p++) {         
+            imgPixels[p*3 + 0] = (byte) ((imgIntegerPixels[p] & 0x00FF0000) >> 16);
+            imgPixels[p*3 + 1] = (byte) ((imgIntegerPixels[p] & 0x0000FF00) >> 8);
+            imgPixels[p*3 + 2] = (byte) (imgIntegerPixels[p] & 0x000000FF);
+        }
+    }
+
+    if(imgPixels != null) {
+        imgMat = new Mat(height, width, CvType.CV_8UC3);
+        imgMat.put(0, 0, imgPixels);
+    }
+
+    System.out.println("matify exec millis: " + (System.currentTimeMillis() - millis));
+
+    return imgMat;
+}
+    
     private static Mat img2Mat(BufferedImage in)
     {
           Mat out;
@@ -61,8 +113,8 @@ public class ImageHandler {
 
           if(in.getType() == BufferedImage.TYPE_INT_RGB)
           {
-              out = new Mat(240, 320, CvType.CV_8UC3);
-              data = new byte[320 * 240 * (int)out.elemSize()];
+              out = new Mat(in.getWidth(), in.getHeight(), CvType.CV_8UC3);
+              data = new byte[in.getWidth() * in.getHeight() * (int)out.elemSize()];
               int[] dataBuff = in.getRGB(0, 0, 320, 240, null, 0, 320);
               for(int i = 0; i < dataBuff.length; i++)
               {
