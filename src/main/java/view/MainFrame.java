@@ -5,6 +5,8 @@
  */
 package view;
 
+import control.Stack;
+import control.ImageHandler;
 import java.util.List;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.dnd.DnDConstants;
@@ -13,11 +15,12 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ItemEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Filter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import model.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import org.opencv.core.Core;
 /**
  *
@@ -28,9 +31,11 @@ public class MainFrame extends javax.swing.JFrame {
     /**
      * Creates new form MainFrame
      */
+    private FileNameExtensionFilter filter;
     private JFileChooser fc;
     private static File fichero;
     private static Stack pila;
+    
     public MainFrame() {
         initComponents();
         fc = new JFileChooser();
@@ -59,6 +64,7 @@ public class MainFrame extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jSlider1 = new javax.swing.JSlider();
         thresholdLabel = new javax.swing.JLabel();
+        authorsLabel = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         openFileMenuItem = new javax.swing.JMenuItem();
@@ -72,12 +78,6 @@ public class MainFrame extends javax.swing.JFrame {
         jMenu3 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        lienzo1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                lienzo1MouseReleased(evt);
-            }
-        });
 
         jLabel1.setText("Elija una imagen en File -> Open Image, o arrastre su imagen aquí");
 
@@ -112,6 +112,8 @@ public class MainFrame extends javax.swing.JFrame {
         });
 
         thresholdLabel.setText("jLabel2");
+
+        authorsLabel.setText("Azael Santana Henríquez y Pablo López Martín");
 
         jMenu1.setText("File");
 
@@ -201,6 +203,10 @@ public class MainFrame extends javax.swing.JFrame {
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(lienzo1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(authorsLabel)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -214,7 +220,9 @@ public class MainFrame extends javax.swing.JFrame {
                         .addComponent(thresholdLabel)
                         .addGap(18, 18, 18)))
                 .addComponent(lienzo1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(89, 89, 89))
+                .addGap(67, 67, 67)
+                .addComponent(authorsLabel)
+                .addContainerGap())
         );
 
         pack();
@@ -226,10 +234,14 @@ public class MainFrame extends javax.swing.JFrame {
         thresholdCheckBoxMenuItem.setEnabled(true);
     }
     private void openFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openFileMenuItemActionPerformed
-        
-        int res = fc.showOpenDialog(null);
-        if(res==JFileChooser.APPROVE_OPTION){
 
+        fc.setAcceptAllFileFilterUsed(false);
+        filter = new FileNameExtensionFilter("Imágenes","png","jpg","jpeg","bmp");
+        fc.addChoosableFileFilter(filter);
+        int res = fc.showOpenDialog(null);
+     
+        
+        if(res==JFileChooser.APPROVE_OPTION){
             File fichero = fc.getSelectedFile();
             this.fichero=fichero;
             ImageHandler.openImage(fichero);
@@ -238,15 +250,9 @@ public class MainFrame extends javax.swing.JFrame {
             sliderVisible(false);
             undoRedoEnable(false);
             thresholdCheckBoxMenuItem.setState(false);
-        }else if (res==JFileChooser.CANCEL_OPTION){
-            
         }
       
     }//GEN-LAST:event_openFileMenuItemActionPerformed
-
-    private void lienzo1MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lienzo1MouseReleased
-     
-    }//GEN-LAST:event_lienzo1MouseReleased
 
     private void jSlider1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider1StateChanged
         try {
@@ -282,7 +288,6 @@ public class MainFrame extends javax.swing.JFrame {
         if(evt.getStateChange() == ItemEvent.SELECTED){
             try {
                 sliderVisible(true);
-            
                 ImageHandler.applyThreshold(fichero,jSlider1.getValue());
                 undoRedoEnable(true);
             } catch (IOException ex) {
@@ -317,9 +322,6 @@ public class MainFrame extends javax.swing.JFrame {
             System.out.println(pila.undo());
             lienzo1.repaint();
         }
-       
-
-       
     }//GEN-LAST:event_undoMenuItemActionPerformed
 
     private void redoMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_redoMenuItemActionPerformed
@@ -330,10 +332,7 @@ public class MainFrame extends javax.swing.JFrame {
                 lienzo1.repaint();
             }
         }catch(Exception e){
-            
         }
-        
-       
     }//GEN-LAST:event_redoMenuItemActionPerformed
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
@@ -346,7 +345,8 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jMenu3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu3MouseClicked
-       JOptionPane.showMessageDialog(null, "Información sobre la app");
+       JOptionPane.showMessageDialog(null, "Use la opción FILE para abrir y guardar una imagen o salir. \nUse la opción EDIT para realizar undo, redo y aplicar el umbralizado   ");
+     
     }//GEN-LAST:event_jMenu3MouseClicked
 
     /**
@@ -385,6 +385,7 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel authorsLabel;
     private javax.swing.JFileChooser jFileChooser1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JMenu jMenu1;

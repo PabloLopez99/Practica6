@@ -136,6 +136,11 @@
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="authorsLabel" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
+          </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -153,16 +158,15 @@
                   </Group>
               </Group>
               <Component id="lienzo1" max="32767" attributes="0"/>
-              <EmptySpace min="-2" pref="89" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="67" max="-2" attributes="0"/>
+              <Component id="authorsLabel" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
   </Layout>
   <SubComponents>
     <Container class="view.Lienzo" name="lienzo1">
-      <Events>
-        <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lienzo1MouseReleased"/>
-      </Events>
 
       <Layout>
         <DimensionLayout dim="0">
@@ -211,6 +215,11 @@
     <Component class="javax.swing.JLabel" name="thresholdLabel">
       <Properties>
         <Property name="text" type="java.lang.String" value="jLabel2"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="authorsLabel">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Azael Santana Henr&#xed;quez y Pablo L&#xf3;pez Mart&#xed;n"/>
       </Properties>
     </Component>
   </SubComponents>

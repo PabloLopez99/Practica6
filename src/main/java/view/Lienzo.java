@@ -16,9 +16,7 @@ import javax.swing.JPanel;
 public class Lienzo extends JPanel {
     private static BufferedImage imagen=null;
     
-    public Lienzo(){
-        
-    }
+ 
     
     @Override
     public void paintComponent(Graphics g){

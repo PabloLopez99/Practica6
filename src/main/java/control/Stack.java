@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package model;
+package control;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -22,7 +22,6 @@ public class Stack {
    public void add(int n){
        counter++;
        lista.add(n);
-       
    }
    public int undo(){
        counter--;
