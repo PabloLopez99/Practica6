@@ -7,6 +7,7 @@ package view;
 
 import control.Stack;
 import control.ImageHandler;
+import java.awt.Color;
 import java.util.List;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.dnd.DnDConstants;
@@ -233,14 +234,15 @@ public class MainFrame extends javax.swing.JFrame {
         saveFileMenuItem.setEnabled(true);
         thresholdCheckBoxMenuItem.setEnabled(true);
     }
-    private void openFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openFileMenuItemActionPerformed
-
-        fc.setAcceptAllFileFilterUsed(false);
-        filter = new FileNameExtensionFilter("Imágenes","png","jpg","jpeg","bmp");
+    private void setFileChooser(){
+          fc.setAcceptAllFileFilterUsed(false);
+        filter = new FileNameExtensionFilter("Imágenes (png, jpg, jpeg, bmp)","png","jpg","jpeg","bmp");
         fc.addChoosableFileFilter(filter);
-        int res = fc.showOpenDialog(null);
      
-        
+    }
+    private void openFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openFileMenuItemActionPerformed
+        setFileChooser();
+        int res = fc.showOpenDialog(null);
         if(res==JFileChooser.APPROVE_OPTION){
             File fichero = fc.getSelectedFile();
             this.fichero=fichero;
