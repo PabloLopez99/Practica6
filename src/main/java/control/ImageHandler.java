@@ -4,15 +4,9 @@
  * and open the template in the editor.
  */
 package control;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferByte;
-import java.awt.image.DataBufferInt;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 import javax.imageio.ImageIO;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -34,7 +28,7 @@ public class ImageHandler {
            fichero=fichero;
            Lienzo.setImage(image);
         }catch(Exception e){
-            
+ 
         }
     }
 
@@ -45,7 +39,6 @@ public class ImageHandler {
         BufferedImage bi = Lienzo.getImage();
         File outputfile = new File(path);
         ImageIO.write(bi, "png", outputfile);
-
 
         //Mat m= new Mat(Lienzo.getImage().getWidth(),Lienzo.getImage().getHeight(),CvType.CV_8UC3);
         //   byte[] pixels = ((DataBufferByte) Lienzo.getImage().getRaster().getDataBuffer()).getData();
@@ -63,15 +56,10 @@ public class ImageHandler {
    
     public static void applyThreshold(File fichero,Integer umbral) throws IOException {
         nu.pattern.OpenCV.loadShared(); System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-        Mat mat2= Imgcodecs.imread(fichero.getAbsolutePath());
-         
-         mat2= umbralizar(mat2,umbral);
-         
-         
-         BufferedImage image=(BufferedImage) HighGui.toBufferedImage(mat2);
-         Lienzo.setImage(image);
-        
-         
+        Mat mat= Imgcodecs.imread(fichero.getAbsolutePath()); 
+        mat= umbralizar(mat,umbral);    
+        BufferedImage image=(BufferedImage) HighGui.toBufferedImage(mat);
+        Lienzo.setImage(image);   
     }
     private static  Mat umbralizar(Mat imagen_original, Integer umbral) { // crear dos imágenes en niveles de gris con el mismo
         // crear dos imágenes en niveles de gris con el mismo        

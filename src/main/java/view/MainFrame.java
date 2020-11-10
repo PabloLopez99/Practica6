@@ -7,7 +7,6 @@ package view;
 
 import control.Stack;
 import control.ImageHandler;
-import java.awt.Color;
 import java.util.List;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.dnd.DnDConstants;
@@ -16,14 +15,13 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ItemEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Filter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ButtonGroup;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import org.opencv.core.Core;
+
 /**
  *
  * @author pabloantoniolopezmartin
@@ -34,7 +32,7 @@ public class MainFrame extends javax.swing.JFrame {
      * Creates new form MainFrame
      */
     private FileNameExtensionFilter filter;
-    private final JFileChooser fc;
+    private JFileChooser fc;
     private static File fichero;
     private static Stack pila;
     private String exitDialogMessage;
@@ -42,21 +40,7 @@ public class MainFrame extends javax.swing.JFrame {
     private ButtonGroup buttonGroup;
     public MainFrame() {
         initComponents();
-        fc = new JFileChooser();
-        this.setSize(1034,768);
-        
-        setDropTarget();
-        thresholdLabel.setText("0");
-        jSlider1.setVisible(false);
-        thresholdCheckBoxMenuItem.setSelected(false);
-        thresholdCheckBoxMenuItem.setEnabled(false);
-        saveFileMenuItem.setEnabled(false);
-        pila= new Stack();
-        buttonGroup= new ButtonGroup();
-        buttonGroup.add(spanishRadioButtonMenuItem);
-        buttonGroup.add(englishRadioButtonMenuItem);
-        spanishRadioButtonMenuItem.setSelected(rootPaneCheckingEnabled);
-        setLanguage("Spanish");
+        initialConfig();
     }
 
     /**
@@ -259,6 +243,28 @@ public class MainFrame extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    private void initialConfig(){
+        fc = new JFileChooser();
+        this.setSize(1034,768);
+        
+        setDropTarget();
+        thresholdLabel.setText("0");
+        jSlider1.setVisible(false);
+        
+        thresholdCheckBoxMenuItem.setSelected(false);
+        thresholdCheckBoxMenuItem.setEnabled(false);
+        saveFileMenuItem.setEnabled(false);
+        pila= new Stack();
+        setButtonGroupAndInitialLanguage();
+    }
+    
+    private void setButtonGroupAndInitialLanguage(){
+        buttonGroup= new ButtonGroup();
+        buttonGroup.add(spanishRadioButtonMenuItem);
+        buttonGroup.add(englishRadioButtonMenuItem);
+        spanishRadioButtonMenuItem.setSelected(rootPaneCheckingEnabled);
+        setLanguage("Spanish");
+    }
     
     private void setLanguage(String language){
         if(language.equals("Spanish")){
@@ -293,17 +299,20 @@ public class MainFrame extends javax.swing.JFrame {
         }
         
     }
+    
     private void openFileActions(){
         startInfoLabel.setText("");
         saveFileMenuItem.setEnabled(true);
         thresholdCheckBoxMenuItem.setEnabled(true);
     }
+    
     private void setFileChooser(){
-          fc.setAcceptAllFileFilterUsed(false);
+        fc.setAcceptAllFileFilterUsed(false);
         filter = new FileNameExtensionFilter("Imágenes (png, jpg, jpeg, bmp)","png","jpg","jpeg","bmp");
         fc.addChoosableFileFilter(filter);
      
     }
+    
     private void openFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openFileMenuItemActionPerformed
         setFileChooser();
         int res = fc.showOpenDialog(null);
@@ -317,7 +326,6 @@ public class MainFrame extends javax.swing.JFrame {
             undoRedoEnable(false);
             thresholdCheckBoxMenuItem.setState(false);
         }
-      
     }//GEN-LAST:event_openFileMenuItemActionPerformed
 
     private void jSlider1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider1StateChanged
@@ -341,6 +349,7 @@ public class MainFrame extends javax.swing.JFrame {
             jSlider1.setVisible(false); 
         }
     }
+    
     private void undoRedoEnable(boolean a){
         if(a){
             undoMenuItem.setEnabled(true);
@@ -350,11 +359,23 @@ public class MainFrame extends javax.swing.JFrame {
             redoMenuItem.setEnabled(false);
         }
     }
+    
     private void thresholdCheckBoxMenuItemItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_thresholdCheckBoxMenuItemItemStateChanged
         if(evt.getStateChange() == ItemEvent.SELECTED){
             try {
+                String n= JOptionPane.showInputDialog("Introduzca el umbral [0-255]");
+                int num;
+                if(Integer.parseInt(n)>255){
+                    num=255;
+                }else if(Integer.parseInt(n)<0){
+                    num=0;
+                }else{
+                    num=Integer.parseInt(n);
+                }
+                
+                ImageHandler.applyThreshold(fichero,num);
+                jSlider1.setValue(num);
                 sliderVisible(true);
-                ImageHandler.applyThreshold(fichero,jSlider1.getValue());
                 undoRedoEnable(true);
             } catch (IOException ex) {
                 Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -422,7 +443,26 @@ public class MainFrame extends javax.swing.JFrame {
     private void spanishRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spanishRadioButtonMenuItemActionPerformed
         setLanguage("Spanish");
     }//GEN-LAST:event_spanishRadioButtonMenuItemActionPerformed
-
+   
+    private void setDropTarget() {
+        lienzo1.setDropTarget(new DropTarget(){
+            public synchronized void drop(DropTargetDropEvent evt){
+                try{
+                    evt.acceptDrop(DnDConstants.ACTION_COPY);
+                    List<File> droppedFiles = (List<File>)
+                        evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+                    for (File file: droppedFiles){
+                        openFileActions();
+                        fichero=file;
+                        ImageHandler.openImage(file);
+                    }
+                }catch(Exception e){
+                    
+                }
+            }
+        });
+        
+    }
     /**
      * @param args the command line arguments
      */
@@ -481,23 +521,5 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem undoMenuItem;
     // End of variables declaration//GEN-END:variables
 
-    private void setDropTarget() {
-        lienzo1.setDropTarget(new DropTarget(){
-            public synchronized void drop(DropTargetDropEvent evt){
-                try{
-                    evt.acceptDrop(DnDConstants.ACTION_COPY);
-                    List<File> droppedFiles = (List<File>)
-                        evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
-                    for (File file: droppedFiles){
-                        openFileActions();
-                        fichero=file;
-                        ImageHandler.openImage(file);
-                    }
-                }catch(Exception e){
-                    
-                }
-            }
-        });
-        
-    }
+   
 }
