@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.logging.Filter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ButtonGroup;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -33,10 +34,12 @@ public class MainFrame extends javax.swing.JFrame {
      * Creates new form MainFrame
      */
     private FileNameExtensionFilter filter;
-    private JFileChooser fc;
+    private final JFileChooser fc;
     private static File fichero;
     private static Stack pila;
-    
+    private String exitDialogMessage;
+    private String infoDialogMessage;
+    private ButtonGroup buttonGroup;
     public MainFrame() {
         initComponents();
         fc = new JFileChooser();
@@ -49,6 +52,11 @@ public class MainFrame extends javax.swing.JFrame {
         thresholdCheckBoxMenuItem.setEnabled(false);
         saveFileMenuItem.setEnabled(false);
         pila= new Stack();
+        buttonGroup= new ButtonGroup();
+        buttonGroup.add(spanishRadioButtonMenuItem);
+        buttonGroup.add(englishRadioButtonMenuItem);
+        spanishRadioButtonMenuItem.setSelected(rootPaneCheckingEnabled);
+        setLanguage("Spanish");
     }
 
     /**
@@ -62,25 +70,26 @@ public class MainFrame extends javax.swing.JFrame {
 
         jFileChooser1 = new javax.swing.JFileChooser();
         lienzo1 = new view.Lienzo();
-        jLabel1 = new javax.swing.JLabel();
+        startInfoLabel = new javax.swing.JLabel();
         jSlider1 = new javax.swing.JSlider();
         thresholdLabel = new javax.swing.JLabel();
         authorsLabel = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
+        fileMenu = new javax.swing.JMenu();
         openFileMenuItem = new javax.swing.JMenuItem();
         saveFileMenuItem = new javax.swing.JMenuItem();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
+        exitMenuItem = new javax.swing.JMenuItem();
+        editMenu = new javax.swing.JMenu();
         undoMenuItem = new javax.swing.JMenuItem();
         redoMenuItem = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         thresholdCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        jMenu3 = new javax.swing.JMenu();
+        helpMenu = new javax.swing.JMenu();
+        languageMenu = new javax.swing.JMenu();
+        spanishRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        englishRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jLabel1.setText("Elija una imagen en File -> Open Image, o arrastre su imagen aquí");
 
         javax.swing.GroupLayout lienzo1Layout = new javax.swing.GroupLayout(lienzo1);
         lienzo1.setLayout(lienzo1Layout);
@@ -90,7 +99,7 @@ public class MainFrame extends javax.swing.JFrame {
             .addGroup(lienzo1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(lienzo1Layout.createSequentialGroup()
                     .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(jLabel1)
+                    .addComponent(startInfoLabel)
                     .addGap(0, 0, Short.MAX_VALUE)))
         );
         lienzo1Layout.setVerticalGroup(
@@ -99,7 +108,7 @@ public class MainFrame extends javax.swing.JFrame {
             .addGroup(lienzo1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(lienzo1Layout.createSequentialGroup()
                     .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(jLabel1)
+                    .addComponent(startInfoLabel)
                     .addGap(0, 0, Short.MAX_VALUE)))
         );
 
@@ -116,7 +125,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         authorsLabel.setText("Azael Santana Henríquez y Pablo López Martín");
 
-        jMenu1.setText("File");
+        fileMenu.setText("File");
 
         openFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.SHIFT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
         openFileMenuItem.setText("Open File");
@@ -125,7 +134,7 @@ public class MainFrame extends javax.swing.JFrame {
                 openFileMenuItemActionPerformed(evt);
             }
         });
-        jMenu1.add(openFileMenuItem);
+        fileMenu.add(openFileMenuItem);
 
         saveFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         saveFileMenuItem.setText("Save File");
@@ -134,20 +143,20 @@ public class MainFrame extends javax.swing.JFrame {
                 saveFileMenuItemActionPerformed(evt);
             }
         });
-        jMenu1.add(saveFileMenuItem);
+        fileMenu.add(saveFileMenuItem);
 
-        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0));
-        jMenuItem1.setText("Exit");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        exitMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0));
+        exitMenuItem.setText("Exit");
+        exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                exitMenuItemActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem1);
+        fileMenu.add(exitMenuItem);
 
-        jMenuBar1.add(jMenu1);
+        jMenuBar1.add(fileMenu);
 
-        jMenu2.setText("Edit");
+        editMenu.setText("Edit");
 
         undoMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         undoMenuItem.setText("Undo");
@@ -156,7 +165,7 @@ public class MainFrame extends javax.swing.JFrame {
                 undoMenuItemActionPerformed(evt);
             }
         });
-        jMenu2.add(undoMenuItem);
+        editMenu.add(undoMenuItem);
 
         redoMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z, java.awt.event.InputEvent.SHIFT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
         redoMenuItem.setText("Redo");
@@ -165,8 +174,8 @@ public class MainFrame extends javax.swing.JFrame {
                 redoMenuItemActionPerformed(evt);
             }
         });
-        jMenu2.add(redoMenuItem);
-        jMenu2.add(jSeparator1);
+        editMenu.add(redoMenuItem);
+        editMenu.add(jSeparator1);
 
         thresholdCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_T, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         thresholdCheckBoxMenuItem.setSelected(true);
@@ -176,17 +185,39 @@ public class MainFrame extends javax.swing.JFrame {
                 thresholdCheckBoxMenuItemItemStateChanged(evt);
             }
         });
-        jMenu2.add(thresholdCheckBoxMenuItem);
+        editMenu.add(thresholdCheckBoxMenuItem);
 
-        jMenuBar1.add(jMenu2);
+        jMenuBar1.add(editMenu);
 
-        jMenu3.setText("Ayuda");
-        jMenu3.addMouseListener(new java.awt.event.MouseAdapter() {
+        helpMenu.setText("Ayuda");
+        helpMenu.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jMenu3MouseClicked(evt);
+                helpMenuMouseClicked(evt);
             }
         });
-        jMenuBar1.add(jMenu3);
+        jMenuBar1.add(helpMenu);
+
+        languageMenu.setText("Idioma");
+
+        spanishRadioButtonMenuItem.setSelected(true);
+        spanishRadioButtonMenuItem.setText("Español");
+        spanishRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                spanishRadioButtonMenuItemActionPerformed(evt);
+            }
+        });
+        languageMenu.add(spanishRadioButtonMenuItem);
+
+        englishRadioButtonMenuItem.setSelected(true);
+        englishRadioButtonMenuItem.setText("English");
+        englishRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                englishRadioButtonMenuItemActionPerformed(evt);
+            }
+        });
+        languageMenu.add(englishRadioButtonMenuItem);
+
+        jMenuBar1.add(languageMenu);
 
         setJMenuBar(jMenuBar1);
 
@@ -228,9 +259,42 @@ public class MainFrame extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    
+    private void setLanguage(String language){
+        if(language.equals("Spanish")){
+            editMenu.setText("Editar");
+            exitMenuItem.setText("Salir");
+            fileMenu.setText("Archivo");
+            helpMenu.setText("Ayuda");
+            languageMenu.setText("Idioma");
+            openFileMenuItem.setText("Abrir");
+            redoMenuItem.setText("Rehacer");
+            saveFileMenuItem.setText("Guardar");
+            startInfoLabel.setText("Elija una imagen en Archivo -> Abrir Imagen, o arrastre su imagen aquí");
+            thresholdCheckBoxMenuItem.setText("Umbralizado");
+            undoMenuItem.setText("Deshacer");
+            exitDialogMessage="¿Está seguro de que desea salir?";
+            infoDialogMessage="Use la opción FILE para abrir y guardar una imagen o salir. \nUse la opción EDIT para realizar undo, redo y aplicar el umbralizado";
+        }else if(language.equals("English")){
+            editMenu.setText("Edit");
+            exitMenuItem.setText("Exit");
+            fileMenu.setText("File");
+            helpMenu.setText("Help");
+            languageMenu.setText("Language");
+            openFileMenuItem.setText("Open");
+            redoMenuItem.setText("Redo");
+            saveFileMenuItem.setText("Save");
+            startInfoLabel.setText("Choose an image in File -> Open Image, or drop an image here");
+            thresholdCheckBoxMenuItem.setText("Threshold");
+            undoMenuItem.setText("Undo");
+            exitDialogMessage="Are you sure that you want to exit?";
+            infoDialogMessage="Use the option FILE para abrir y guardar una imagen o salir. \nUse the option EDIT to undo, redo and apply threshold";
 
+        }
+        
+    }
     private void openFileActions(){
-        jLabel1.setText("");
+        startInfoLabel.setText("");
         saveFileMenuItem.setEnabled(true);
         thresholdCheckBoxMenuItem.setEnabled(true);
     }
@@ -337,19 +401,27 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_redoMenuItemActionPerformed
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+    private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
          int confirmed = JOptionPane.showConfirmDialog(null, 
-        "¿Está seguro de que desea salir?", "Exit",
+        exitDialogMessage, "Exit",
         JOptionPane.YES_NO_OPTION);
         if(confirmed==JOptionPane.YES_OPTION){
             dispose();
         }
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+    }//GEN-LAST:event_exitMenuItemActionPerformed
 
-    private void jMenu3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu3MouseClicked
-       JOptionPane.showMessageDialog(null, "Use la opción FILE para abrir y guardar una imagen o salir. \nUse la opción EDIT para realizar undo, redo y aplicar el umbralizado   ");
+    private void helpMenuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_helpMenuMouseClicked
+       JOptionPane.showMessageDialog(null, infoDialogMessage);
      
-    }//GEN-LAST:event_jMenu3MouseClicked
+    }//GEN-LAST:event_helpMenuMouseClicked
+
+    private void englishRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_englishRadioButtonMenuItemActionPerformed
+        setLanguage("English");
+    }//GEN-LAST:event_englishRadioButtonMenuItemActionPerformed
+
+    private void spanishRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spanishRadioButtonMenuItemActionPerformed
+        setLanguage("Spanish");
+    }//GEN-LAST:event_spanishRadioButtonMenuItemActionPerformed
 
     /**
      * @param args the command line arguments
@@ -388,19 +460,22 @@ public class MainFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel authorsLabel;
+    private javax.swing.JMenu editMenu;
+    private javax.swing.JRadioButtonMenuItem englishRadioButtonMenuItem;
+    private javax.swing.JMenuItem exitMenuItem;
+    private javax.swing.JMenu fileMenu;
+    private javax.swing.JMenu helpMenu;
     private javax.swing.JFileChooser jFileChooser1;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JSlider jSlider1;
+    private javax.swing.JMenu languageMenu;
     private view.Lienzo lienzo1;
     private javax.swing.JMenuItem openFileMenuItem;
     private javax.swing.JMenuItem redoMenuItem;
     private javax.swing.JMenuItem saveFileMenuItem;
+    private javax.swing.JRadioButtonMenuItem spanishRadioButtonMenuItem;
+    private javax.swing.JLabel startInfoLabel;
     private javax.swing.JCheckBoxMenuItem thresholdCheckBoxMenuItem;
     private javax.swing.JLabel thresholdLabel;
     private javax.swing.JMenuItem undoMenuItem;

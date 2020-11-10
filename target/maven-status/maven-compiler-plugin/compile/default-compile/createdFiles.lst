@@ -3,8 +3,10 @@ control/ImageHandler.class
 view/Lienzo.class
 view/MainFrame$3.class
 view/MainFrame$9.class
+view/MainFrame$11.class
 view/MainFrame$7.class
 view/MainFrame$4.class
+view/MainFrame$12.class
 control/Stack.class
 view/MainFrame$8.class
 view/MainFrame.class
