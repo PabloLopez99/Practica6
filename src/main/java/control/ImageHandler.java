@@ -4,6 +4,9 @@
  * and open the template in the editor.
  */
 package control;
+import java.awt.Dimension;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -19,17 +22,58 @@ import view.*;
  *
  * @author pabloantoniolopezmartin
  */
-public class ImageHandler {
+    public class ImageHandler {
     
-
-    public static void openImage(File fichero){
+        
+    private static Dimension dim;
+    public static Dimension openImage(File fichero){
         try{
-           BufferedImage image= ImageIO.read(fichero);
-           fichero=fichero;
-           Lienzo.setImage(image);
+            BufferedImage image= ImageIO.read(fichero);
+            fichero=fichero;
+            BufferedImage aux;
+            aux=checkSize(image);
+            image=aux;
+            
+            if(dim==null){
+                dim= new Dimension(image.getWidth(),image.getHeight());
+            }
+            Lienzo.setImage(image);
+    
+           return dim;
+          
         }catch(Exception e){
- 
+             return null;
         }
+        
+    }
+    private static BufferedImage checkSize(BufferedImage image){
+        if(image.getWidth()>1024 || image.getHeight()>768. ){
+            double widthCoeficient= image.getWidth()/1024.;
+            double heightCoeficient= image.getHeight()/768;
+            image= rescale(image,widthCoeficient,heightCoeficient);
+        }
+        return image;
+    } 
+    private static BufferedImage rescale(BufferedImage image, double widthCoeficient, double heightCoeficient){
+        BufferedImage before = image;
+        int w = before.getWidth();
+        int h = before.getHeight();
+        double coeficient;
+        BufferedImage after = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+        AffineTransform at = new AffineTransform();
+        if(widthCoeficient>heightCoeficient){
+           coeficient=widthCoeficient;
+        }else{
+           coeficient=heightCoeficient;
+        }
+        at.scale(1/coeficient, 1/coeficient);
+        AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+        after = scaleOp.filter(before, after);
+        int newWidth = new Double(image.getWidth() * 1/coeficient).intValue();
+        int newHeight = new Double(image.getHeight() * 1/coeficient).intValue();
+        dim = new Dimension(newWidth,newHeight);
+
+        return after;
     }
 
     public static void saveImage(String path) throws IOException {
@@ -39,19 +83,6 @@ public class ImageHandler {
         BufferedImage bi = Lienzo.getImage();
         File outputfile = new File(path);
         ImageIO.write(bi, "png", outputfile);
-
-        //Mat m= new Mat(Lienzo.getImage().getWidth(),Lienzo.getImage().getHeight(),CvType.CV_8UC3);
-        //   byte[] pixels = ((DataBufferByte) Lienzo.getImage().getRaster().getDataBuffer()).getData();
-        
-       // m.put(0, 0, pixels, 7, pixels.length);
-       
-        
-        // Imgcodecs.imwrite(Lienzo.getImage().toString(),fichero.getAbsolutePath());
- 
-        //Imgcodecs.imwrite(path,bufferedImageToMat(Lienzo.getImage()));
-        //BufferedImage img = new BufferedImage(320, 240, BufferedImage.TYPE_3BYTE_BGR);
-        //img.setRGB(0, 0, 320, 240, pixels, 0, 320);
-        
     }
    
     public static void applyThreshold(File fichero,Integer umbral) throws IOException {

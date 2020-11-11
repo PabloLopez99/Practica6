@@ -7,6 +7,8 @@ package view;
 
 import control.Stack;
 import control.ImageHandler;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.util.List;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.dnd.DnDConstants;
@@ -220,9 +222,8 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(lienzo1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addComponent(authorsLabel)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -236,9 +237,8 @@ public class MainFrame extends javax.swing.JFrame {
                         .addComponent(thresholdLabel)
                         .addGap(18, 18, 18)))
                 .addComponent(lienzo1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(67, 67, 67)
-                .addComponent(authorsLabel)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(authorsLabel))
         );
 
         pack();
@@ -256,6 +256,9 @@ public class MainFrame extends javax.swing.JFrame {
         saveFileMenuItem.setEnabled(false);
         pila= new Stack();
         setButtonGroupAndInitialLanguage();
+        
+   
+   
     }
     
     private void setButtonGroupAndInitialLanguage(){
@@ -280,7 +283,7 @@ public class MainFrame extends javax.swing.JFrame {
             thresholdCheckBoxMenuItem.setText("Umbralizado");
             undoMenuItem.setText("Deshacer");
             exitDialogMessage="¿Está seguro de que desea salir?";
-            infoDialogMessage="Use la opción FILE para abrir y guardar una imagen o salir. \nUse la opción EDIT para realizar undo, redo y aplicar el umbralizado";
+            infoDialogMessage="Use la opción FILE para abrir y guardar una imagen o salir. \nUse la opción EDIT para realizar undo, redo y aplicar el umbralizado \nLas imágenes se redimensionan por defecto a la resolución: 1024x768";
         }else if(language.equals("English")){
             editMenu.setText("Edit");
             exitMenuItem.setText("Exit");
@@ -294,7 +297,7 @@ public class MainFrame extends javax.swing.JFrame {
             thresholdCheckBoxMenuItem.setText("Threshold");
             undoMenuItem.setText("Undo");
             exitDialogMessage="Are you sure that you want to exit?";
-            infoDialogMessage="Use the option FILE para abrir y guardar una imagen o salir. \nUse the option EDIT to undo, redo and apply threshold";
+            infoDialogMessage="Use the option FILE to open or save the image or to exit. \nUse the option EDIT to undo, redo and apply threshold \nBy default images are resized to 1024x768";
 
         }
         
@@ -319,12 +322,13 @@ public class MainFrame extends javax.swing.JFrame {
         if(res==JFileChooser.APPROVE_OPTION){
             File fichero = fc.getSelectedFile();
             this.fichero=fichero;
-            ImageHandler.openImage(fichero);
+            Dimension dimension=ImageHandler.openImage(fichero);
             openFileActions();
             lienzo1.repaint();
             sliderVisible(false);
             undoRedoEnable(false);
             thresholdCheckBoxMenuItem.setState(false);
+            setBounds(0,0,dimension.width+50, dimension.height+100);//TODO
         }
     }//GEN-LAST:event_openFileMenuItemActionPerformed
 
@@ -454,7 +458,12 @@ public class MainFrame extends javax.swing.JFrame {
                     for (File file: droppedFiles){
                         openFileActions();
                         fichero=file;
-                        ImageHandler.openImage(file);
+                        Dimension dimension=ImageHandler.openImage(file);
+                        setBounds(0,0,dimension.width+50, dimension.height+100); //TODO
+                        lienzo1.repaint();
+                        sliderVisible(false);
+                        undoRedoEnable(false);
+                        thresholdCheckBoxMenuItem.setState(false);
                     }
                 }catch(Exception e){
                     
