@@ -30,5 +30,7 @@ public class Lienzo extends JPanel {
     public static BufferedImage getImage(){
         return imagen;
     }
-   
+    public static void removeImage(){
+        imagen=null;
+    }
 }

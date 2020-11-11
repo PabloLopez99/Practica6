@@ -26,13 +26,17 @@ import view.*;
     
         
     private static Dimension dim;
-    public static Dimension openImage(File fichero){
+    public static Dimension openImage(File fichero, Boolean resize){
         try{
             BufferedImage image= ImageIO.read(fichero);
             fichero=fichero;
             BufferedImage aux;
-            aux=checkSize(image);
-            image=aux;
+            if(resize){
+               aux=checkSize(image);
+               image=aux;
+            }
+       
+          
             
             if(dim==null){
                 dim= new Dimension(image.getWidth(),image.getHeight());
@@ -47,7 +51,7 @@ import view.*;
         
     }
     private static BufferedImage checkSize(BufferedImage image){
-        if(image.getWidth()>1024 || image.getHeight()>768. ){
+        if(image.getWidth()>1024 || image.getHeight()>768 ){
             double widthCoeficient= image.getWidth()/1024.;
             double heightCoeficient= image.getHeight()/768;
             image= rescale(image,widthCoeficient,heightCoeficient);
@@ -77,20 +81,23 @@ import view.*;
     }
 
     public static void saveImage(String path) throws IOException {
-        System.out.println(path);
-        System.out.println(Lienzo.getImage().getWidth());
-        
+     
         BufferedImage bi = Lienzo.getImage();
         File outputfile = new File(path);
         ImageIO.write(bi, "png", outputfile);
     }
    
-    public static void applyThreshold(File fichero,Integer umbral) throws IOException {
+    public static void applyThreshold(File fichero,Integer umbral, Boolean resize) throws IOException {
         nu.pattern.OpenCV.loadShared(); System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         Mat mat= Imgcodecs.imread(fichero.getAbsolutePath()); 
         mat= umbralizar(mat,umbral);    
         BufferedImage image=(BufferedImage) HighGui.toBufferedImage(mat);
-        Lienzo.setImage(image);   
+        if(resize){
+            Lienzo.setImage(checkSize(image));   
+        }else{
+            Lienzo.setImage(image);   
+        }
+       
     }
     private static  Mat umbralizar(Mat imagen_original, Integer umbral) { // crear dos imágenes en niveles de gris con el mismo
         // crear dos imágenes en niveles de gris con el mismo        
@@ -117,5 +124,7 @@ import view.*;
         return imagenUmbralizada;
 
         }
+
+   
 }
 
