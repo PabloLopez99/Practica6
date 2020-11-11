@@ -367,20 +367,25 @@ public class MainFrame extends javax.swing.JFrame {
     private void thresholdCheckBoxMenuItemItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_thresholdCheckBoxMenuItemItemStateChanged
         if(evt.getStateChange() == ItemEvent.SELECTED){
             try {
-                String n= JOptionPane.showInputDialog("Introduzca el umbral [0-255]");
+                String n= JOptionPane.showInputDialog("Introduzca el umbral [0-255]","0");
                 int num;
+                if(n.equals("")){
+                    
+                    n="0";
+                }
                 if(Integer.parseInt(n)>255){
                     num=255;
                 }else if(Integer.parseInt(n)<0){
                     num=0;
                 }else{
-                    num=Integer.parseInt(n);
+                    num=Integer.parseInt(n);         
                 }
-                
                 ImageHandler.applyThreshold(fichero,num);
                 jSlider1.setValue(num);
                 sliderVisible(true);
                 undoRedoEnable(true);
+            } catch (java.lang.NumberFormatException ex) {
+                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
                 Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
