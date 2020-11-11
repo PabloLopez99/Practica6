@@ -285,12 +285,9 @@ public class MainFrame extends javax.swing.JFrame {
         thresholdCheckBoxMenuItem.setSelected(false);
         thresholdCheckBoxMenuItem.setEnabled(false);
         saveFileMenuItem.setEnabled(false);
-     
-       
+
         setButtonGroupAndInitialLanguage(language);
-        
-   
-   
+
     }
     
     private void setButtonGroupAndInitialLanguage(String language){
@@ -479,7 +476,8 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
     private void helpMenuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_helpMenuMouseClicked
-       JOptionPane.showMessageDialog(null, infoDialogMessage);
+       JOptionPane.showMessageDialog(this, infoDialogMessage,helpMenu.getText(),1);
+     
      
     }//GEN-LAST:event_helpMenuMouseClicked
 
