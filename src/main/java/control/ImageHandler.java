@@ -5,6 +5,7 @@
  */
 package control;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -23,9 +24,9 @@ import view.*;
  * @author pabloantoniolopezmartin
  */
     public class ImageHandler {
-    
         
     private static Dimension dim;
+    
     public static Dimension openImage(File fichero, Boolean resize){
         try{
             BufferedImage image= ImageIO.read(fichero);
@@ -35,29 +36,31 @@ import view.*;
                aux=checkSize(image);
                image=aux;
             }
-       
-          
-            
             if(dim==null){
                 dim= new Dimension(image.getWidth(),image.getHeight());
             }
+            
+           
             Lienzo.setImage(image);
-    
-           return dim;
+        
           
+          
+            return dim;
         }catch(Exception e){
              return null;
         }
-        
     }
+    
     private static BufferedImage checkSize(BufferedImage image){
         if(image.getWidth()>1024 || image.getHeight()>768 ){
             double widthCoeficient= image.getWidth()/1024.;
             double heightCoeficient= image.getHeight()/768;
-            image= rescale(image,widthCoeficient,heightCoeficient);
+            image= rescale(image, widthCoeficient, heightCoeficient);
+            
         }
         return image;
     } 
+    
     private static BufferedImage rescale(BufferedImage image, double widthCoeficient, double heightCoeficient){
         BufferedImage before = image;
         int w = before.getWidth();
@@ -76,18 +79,18 @@ import view.*;
         int newWidth = new Double(image.getWidth() * 1/coeficient).intValue();
         int newHeight = new Double(image.getHeight() * 1/coeficient).intValue();
         dim = new Dimension(newWidth,newHeight);
-
+     
+     
         return after;
     }
 
     public static void saveImage(String path) throws IOException {
-     
         BufferedImage bi = Lienzo.getImage();
         File outputfile = new File(path);
         ImageIO.write(bi, "png", outputfile);
     }
    
-    public static void applyThreshold(File fichero,Integer umbral, Boolean resize) throws IOException {
+    public static void applyThreshold(File fichero, Integer umbral, Boolean resize) throws IOException {
         nu.pattern.OpenCV.loadShared(); System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         Mat mat= Imgcodecs.imread(fichero.getAbsolutePath()); 
         mat= umbralizar(mat,umbral);    
@@ -97,8 +100,8 @@ import view.*;
         }else{
             Lienzo.setImage(image);   
         }
-       
     }
+    
     private static  Mat umbralizar(Mat imagen_original, Integer umbral) { // crear dos imágenes en niveles de gris con el mismo
         // crear dos imágenes en niveles de gris con el mismo        
         // tamaño que la original
@@ -124,7 +127,5 @@ import view.*;
         return imagenUmbralizada;
 
         }
-
-   
 }
 

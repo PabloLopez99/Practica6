@@ -74,12 +74,12 @@ public class MainFrame extends javax.swing.JFrame {
         redoMenuItem = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         thresholdCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        helpMenu = new javax.swing.JMenu();
         configurationMenu = new javax.swing.JMenu();
         automaticResizeBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         languageMenu = new javax.swing.JMenu();
         spanishRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         englishRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        helpMenu = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -191,14 +191,6 @@ public class MainFrame extends javax.swing.JFrame {
 
         jMenuBar1.add(editMenu);
 
-        helpMenu.setText("Ayuda");
-        helpMenu.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                helpMenuMouseClicked(evt);
-            }
-        });
-        jMenuBar1.add(helpMenu);
-
         configurationMenu.setText("Configuración");
 
         automaticResizeBoxMenuItem.setSelected(true);
@@ -233,6 +225,14 @@ public class MainFrame extends javax.swing.JFrame {
         configurationMenu.add(languageMenu);
 
         jMenuBar1.add(configurationMenu);
+
+        helpMenu.setText("Ayuda");
+        helpMenu.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                helpMenuMouseClicked(evt);
+            }
+        });
+        jMenuBar1.add(helpMenu);
 
         setJMenuBar(jMenuBar1);
 
@@ -337,7 +337,7 @@ public class MainFrame extends javax.swing.JFrame {
             infoDialogMessage="Use the option FILE to: reset the workspace (New), to open an image (it also can be dropped) and to save the image or exit. \nUse the option EDIT: to undo, redo and apply threshold \nBy default, images are resized to 1024x768 (you can disable this in the Settings menu) \nIn the Settings menu you can change de language.";
             newFileMenuItem.setText("New");
             configurationMenu.setText("Settings");
-            automaticResizeBoxMenuItem.setText("Automatic rescale");
+            automaticResizeBoxMenuItem.setText("Automatic resize");
         }
         
     }
@@ -379,7 +379,6 @@ public class MainFrame extends javax.swing.JFrame {
             ImageHandler.applyThreshold(fichero,jSlider1.getValue(),resize);
             thresholdLabel.setText(Integer.toString(jSlider1.getValue()));
             pila.add(jSlider1.getValue());
-            System.out.println(jSlider1.getValue());
         } catch (IOException ex) {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -409,16 +408,20 @@ public class MainFrame extends javax.swing.JFrame {
     private void thresholdCheckBoxMenuItemItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_thresholdCheckBoxMenuItemItemStateChanged
         if(evt.getStateChange() == ItemEvent.SELECTED){
             try {
-                String n= JOptionPane.showInputDialog("Introduzca el umbral [0-255]","0");
+                String n= JOptionPane.showInputDialog(this,"Introduzca el umbral [0-255]","0");
                 int num;
-                if(n.equals("")){n="0";}
-                if(Integer.parseInt(n)>255){num=255;
-                }else if(Integer.parseInt(n)<0){num=0;
-                }else{num=Integer.parseInt(n);}
-                ImageHandler.applyThreshold(fichero,num,resize);
-                jSlider1.setValue(num);
-                sliderVisible(true);
-                undoRedoEnable(true);
+                if(n!=null){
+                    if(n.equals("")){n="0";}
+                    if(Integer.parseInt(n)>255){num=255;
+                    }else if(Integer.parseInt(n)<0){num=0;
+                    }else{num=Integer.parseInt(n);}
+                    ImageHandler.applyThreshold(fichero,num,resize);
+                    jSlider1.setValue(num);
+                    sliderVisible(true);
+                    undoRedoEnable(true);  
+                }else{
+                    thresholdCheckBoxMenuItem.setSelected(false);
+                }  
             } catch (java.lang.NumberFormatException ex) {
                 Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
@@ -450,7 +453,6 @@ public class MainFrame extends javax.swing.JFrame {
        
         if(pila.getCounter()>=1){
             jSlider1.setValue(pila.undo());
-            System.out.println(pila.undo());
             lienzo1.repaint();
         }
     }//GEN-LAST:event_undoMenuItemActionPerformed
@@ -467,7 +469,7 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_redoMenuItemActionPerformed
 
     private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
-         int confirmed = JOptionPane.showConfirmDialog(null, 
+         int confirmed = JOptionPane.showConfirmDialog(this, 
         exitDialogMessage, "Exit",
         JOptionPane.YES_NO_OPTION);
         if(confirmed==JOptionPane.YES_OPTION){
