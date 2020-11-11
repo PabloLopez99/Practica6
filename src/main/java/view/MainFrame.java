@@ -283,7 +283,7 @@ public class MainFrame extends javax.swing.JFrame {
             thresholdCheckBoxMenuItem.setText("Umbralizado");
             undoMenuItem.setText("Deshacer");
             exitDialogMessage="¿Está seguro de que desea salir?";
-            infoDialogMessage="Use la opción FILE para abrir y guardar una imagen o salir. \nUse la opción EDIT para realizar undo, redo y aplicar el umbralizado \nLas imágenes se redimensionan por defecto a la resolución: 1024x768";
+            infoDialogMessage="Use la opción FILE para abrir (o arrastre la imagen) y guardar una imagen o salir. \nUse la opción EDIT para realizar undo, redo y aplicar el umbralizado \nLas imágenes se redimensionan por defecto a la resolución: 1024x768";
         }else if(language.equals("English")){
             editMenu.setText("Edit");
             exitMenuItem.setText("Exit");
@@ -297,7 +297,7 @@ public class MainFrame extends javax.swing.JFrame {
             thresholdCheckBoxMenuItem.setText("Threshold");
             undoMenuItem.setText("Undo");
             exitDialogMessage="Are you sure that you want to exit?";
-            infoDialogMessage="Use the option FILE to open or save the image or to exit. \nUse the option EDIT to undo, redo and apply threshold \nBy default images are resized to 1024x768";
+            infoDialogMessage="Use the option FILE to open (or drop the image) and save the image or exit. \nUse the option EDIT to undo, redo and apply threshold \nBy default images are resized to 1024x768";
 
         }
         
@@ -323,7 +323,10 @@ public class MainFrame extends javax.swing.JFrame {
             File fichero = fc.getSelectedFile();
             this.fichero=fichero;
             Dimension dimension=ImageHandler.openImage(fichero);
-            openFileActions();
+            if(dimension!=null){
+                openFileActions();
+            }
+        
             lienzo1.repaint();
             sliderVisible(false);
             undoRedoEnable(false);
@@ -461,10 +464,15 @@ public class MainFrame extends javax.swing.JFrame {
                     List<File> droppedFiles = (List<File>)
                         evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
                     for (File file: droppedFiles){
-                        openFileActions();
+                        
                         fichero=file;
                         Dimension dimension=ImageHandler.openImage(file);
+                        if(dimension!=null){
+                            openFileActions();
+                        }
                         setBounds(0,0,dimension.width+50, dimension.height+100); //TODO
+                       //TODO si no es una imagen que se siga mostrando el mensaje
+                       
                         lienzo1.repaint();
                         sliderVisible(false);
                         undoRedoEnable(false);
