@@ -30,7 +30,6 @@ import view.*;
     public static Dimension openImage(File fichero, Boolean resize){
         try{
             BufferedImage image= ImageIO.read(fichero);
-            fichero=fichero;
             BufferedImage aux;
             if(resize){
                aux=checkSize(image);
@@ -39,12 +38,7 @@ import view.*;
             if(dim==null){
                 dim= new Dimension(image.getWidth(),image.getHeight());
             }
-            
-           
             Lienzo.setImage(image);
-        
-          
-          
             return dim;
         }catch(Exception e){
              return null;
@@ -57,6 +51,8 @@ import view.*;
             double heightCoeficient= image.getHeight()/768;
             image= rescale(image, widthCoeficient, heightCoeficient);
             
+        }else{
+            dim=null;
         }
         return image;
     } 

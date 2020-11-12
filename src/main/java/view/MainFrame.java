@@ -359,18 +359,8 @@ public class MainFrame extends javax.swing.JFrame {
         setFileChooser();
         int res = fc.showOpenDialog(null);
         if(res==JFileChooser.APPROVE_OPTION){
-            File fichero = fc.getSelectedFile();
-            this.fichero=fichero;
-            Dimension dimension=ImageHandler.openImage(fichero,resize);
-            if(dimension!=null){
-                openFileActions();
-            }
-        
-            lienzo1.repaint();
-            sliderVisible(false);
-            undoRedoEnable(false);
-            thresholdCheckBoxMenuItem.setState(false);
-            setBounds(0,0,dimension.width+50, dimension.height+100);//TODO
+          //  File fichero = fc.getSelectedFile();
+           openImageActions(fc.getSelectedFile());
         }
     }//GEN-LAST:event_openFileMenuItemActionPerformed
 
@@ -516,7 +506,20 @@ public class MainFrame extends javax.swing.JFrame {
               resize=false;
           }
     }//GEN-LAST:event_automaticResizeBoxMenuItemItemStateChanged
-   
+    
+    private void openImageActions(File file){
+        fichero=file;
+        Dimension dimension=ImageHandler.openImage(file,resize);
+        if(dimension!=null){
+            openFileActions();
+        }
+
+        lienzo1.repaint();
+        setBounds(0,0,dimension.width+50, dimension.height+100);//TODO
+        sliderVisible(false);
+        undoRedoEnable(false);
+        thresholdCheckBoxMenuItem.setState(false);
+    }
     private void setDropTarget() {
         lienzo1.setDropTarget(new DropTarget(){
             public synchronized void drop(DropTargetDropEvent evt){
@@ -525,19 +528,7 @@ public class MainFrame extends javax.swing.JFrame {
                     List<File> droppedFiles = (List<File>)
                         evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
                     for (File file: droppedFiles){
-                        
-                        fichero=file;
-                        Dimension dimension=ImageHandler.openImage(file,resize);
-                        if(dimension!=null){
-                            openFileActions();
-                        }
-                        setBounds(0,0,dimension.width+50, dimension.height+100); //TODO
-                       //TODO si no es una imagen que se siga mostrando el mensaje
-                       
-                        lienzo1.repaint();
-                        sliderVisible(false);
-                        undoRedoEnable(false);
-                        thresholdCheckBoxMenuItem.setState(false);
+                        openImageActions(file);
                     }
                 }catch(Exception e){
                     
