@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package control;
+package model;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
@@ -30,6 +30,7 @@ import view.*;
     public static Dimension openImage(File fichero, Boolean resize){
         try{
             BufferedImage image= ImageIO.read(fichero);
+            
             BufferedImage aux;
             if(resize){
                aux=checkSize(image);
@@ -82,6 +83,7 @@ import view.*;
 
     public static void saveImage(String path) throws IOException {
         BufferedImage bi = Lienzo.getImage();
+        System.out.println(bi.getWidth());
         File outputfile = new File(path);
         ImageIO.write(bi, "png", outputfile);
     }

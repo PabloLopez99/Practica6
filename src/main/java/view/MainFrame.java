@@ -5,8 +5,9 @@
  */
 package view;
 
-import control.Stack;
-import control.ImageHandler;
+import model.Lienzo;
+import model.Stack;
+import model.ImageHandler;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.util.List;
@@ -57,7 +58,7 @@ public class MainFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         jFileChooser1 = new javax.swing.JFileChooser();
-        lienzo1 = new view.Lienzo();
+        lienzo1 = new model.Lienzo();
         startInfoLabel = new javax.swing.JLabel();
         jSlider1 = new javax.swing.JSlider();
         thresholdLabel = new javax.swing.JLabel();
@@ -193,6 +194,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         configurationMenu.setText("Configuración");
 
+        automaticResizeBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         automaticResizeBoxMenuItem.setSelected(true);
         automaticResizeBoxMenuItem.setText("Redimensión automática");
         automaticResizeBoxMenuItem.addItemListener(new java.awt.event.ItemListener() {
@@ -204,6 +206,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         languageMenu.setText("Idioma");
 
+        spanishRadioButtonMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_COLON, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         spanishRadioButtonMenuItem.setSelected(true);
         spanishRadioButtonMenuItem.setText("Español");
         spanishRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -213,6 +216,7 @@ public class MainFrame extends javax.swing.JFrame {
         });
         languageMenu.add(spanishRadioButtonMenuItem);
 
+        englishRadioButtonMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         englishRadioButtonMenuItem.setSelected(true);
         englishRadioButtonMenuItem.setText("English");
         englishRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -587,7 +591,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JSlider jSlider1;
     private javax.swing.JMenu languageMenu;
-    private view.Lienzo lienzo1;
+    private model.Lienzo lienzo1;
     private javax.swing.JMenuItem newFileMenuItem;
     private javax.swing.JMenuItem openFileMenuItem;
     private javax.swing.JMenuItem redoMenuItem;
